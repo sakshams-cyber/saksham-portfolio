@@ -2,6 +2,7 @@ import {
   BufferAttribute,
   BufferGeometry,
   CustomBlending,
+  Vector3,
   DynamicDrawUsage,
   OneFactor,
   PerspectiveCamera,
@@ -26,6 +27,10 @@ import frag from './shaders/particles.frag.glsl?raw';
 const FOV = 55;
 const CAMERA_Z = 18.5;
 const RING_TILT = (18 * Math.PI) / 180;
+/** World units visible across the viewport height at z = 0 (the plane shapes live on). */
+const VIEW_H = 2 * Math.tan((FOV * Math.PI) / 360) * CAMERA_Z;
+/** The name shape's settled width in world units at scale 1 (shapes/name.ts). */
+const NAME_WIDTH = 15;
 
 /** Point size that keeps total additive brightness roughly constant across tiers: covered area
  *  ∝ N·size², so size ∝ 1/√N, anchored to the prototype's look (~11k points at 0.11). */
@@ -47,6 +52,13 @@ export interface EngineStats {
   fps: number;
   particles: number;
   tier: Tier;
+}
+
+/** A DOM word to lay the settled name over, in document pixels (so it scrolls with the page). */
+export interface Anchor {
+  cx: number;
+  cy: number;
+  width: number;
 }
 
 export interface Engine extends EngineApi {
@@ -134,6 +146,8 @@ export async function createEngine(opts: EngineOptions): Promise<Engine> {
     uMaxPoint: { value: opts.maxPointSize },
     uShapeScale: { value: 1 },
     uOpacity: { value: 0 },
+    uAnchor: { value: new Vector3(0, 0, 1) },
+    uAnchorMix: { value: 0 },
   };
   const material = new ShaderMaterial({
     vertexShader: vert,
@@ -172,6 +186,17 @@ export async function createEngine(opts: EngineOptions): Promise<Engine> {
   const mouse = { x: 0, y: 0 };
   const cam = { x: 0, y: 0 };
   const tilt = { x: 0 };
+  // Hero anchor (document px), tweened when it changes; mix follows whether the name is the target.
+  const anchor = { cx: 0, cy: 0, width: 0, set: false };
+  let targetShape: MorphKey = opts.initial?.shape ?? 'scatter';
+  function retweenAnchorMix(duration: number) {
+    gsap.to(uniforms.uAnchorMix, {
+      value: anchor.set && targetShape === 'name' ? 1 : 0,
+      duration: freeze ? 0 : duration,
+      ease: 'power2.inOut',
+      overwrite: true,
+    });
+  }
   const hoverCapable = matchMedia('(hover: hover) and (pointer: fine)').matches;
   let last = performance.now();
   let elapsed = 0;
@@ -234,16 +259,30 @@ export async function createEngine(opts: EngineOptions): Promise<Engine> {
       }
     }
 
+    // Anchor: document px → world units on the z = 0 plane, following the page scroll.
+    const mix = uniforms.uAnchorMix.value;
+    if (mix > 0) {
+      const vh = canvas.clientHeight || window.innerHeight;
+      const vw = canvas.clientWidth || window.innerWidth;
+      const k = VIEW_H / vh; // world units per CSS pixel
+      const a = uniforms.uAnchor.value;
+      a.x = (anchor.cx - vw / 2) * k;
+      a.y = (vh / 2 - (anchor.cy - window.scrollY)) * k;
+      a.z = (anchor.width * k) / NAME_WIDTH;
+    }
+    // While anchored, motion is damped so the particle word stays registered with the text.
+    const still = 1 - 0.85 * mix;
+
     // Damped camera parallax toward the pointer (lerp 0.04 per frame).
-    cam.x += (mouse.x * 1.6 - cam.x) * 0.04;
-    cam.y += (-mouse.y * 1.1 - cam.y) * 0.04;
+    cam.x += (mouse.x * 1.6 * still - cam.x) * 0.04;
+    cam.y += (-mouse.y * 1.1 * still - cam.y) * 0.04;
     camera.position.set(cam.x, cam.y, CAMERA_Z);
     camera.lookAt(0, 0, 0);
 
     // Bounded sway rather than continuous spin so the name never turns edge-on (see DECISIONS).
     const p = layer.points;
-    p.rotation.y = Math.sin(t * 0.12) * 0.32 + mouse.x * 0.3;
-    p.rotation.x = Math.sin(t * 0.25) * 0.05 - mouse.y * 0.2 + tilt.x;
+    p.rotation.y = (Math.sin(t * 0.12) * 0.32 + mouse.x * 0.3) * still;
+    p.rotation.x = (Math.sin(t * 0.25) * 0.05 - mouse.y * 0.2) * still + tilt.x;
     stars.points.rotation.y = t * 0.004;
 
     renderer.render(scene, camera);
@@ -321,6 +360,8 @@ export async function createEngine(opts: EngineOptions): Promise<Engine> {
       const immediate = o.immediate || freeze;
       const changed = layer.morph.setTarget(shape, accent, { ...o, immediate });
       if (!changed) return;
+      targetShape = shape;
+      retweenAnchorMix(immediate ? 0 : (o.duration ?? 1.7));
       // The ring is tilted in the model matrix, not the data, so morphs stay simple.
       gsap.to(tilt, {
         x: shape === 'ring' ? RING_TILT : 0,
@@ -336,6 +377,22 @@ export async function createEngine(opts: EngineOptions): Promise<Engine> {
         ease: 'power1.inOut',
         overwrite: true,
       });
+    },
+    setAnchor(next: Anchor | null, o: { immediate?: boolean } = {}) {
+      const was = anchor.set;
+      if (next) {
+        // First placement snaps; later corrections (resize, entrance settling) glide.
+        gsap.to(anchor, {
+          cx: next.cx,
+          cy: next.cy,
+          width: next.width,
+          duration: !was || o.immediate || freeze ? 0 : 0.6,
+          ease: 'power2.out',
+          overwrite: true,
+        });
+      }
+      anchor.set = !!next;
+      if (was !== anchor.set) retweenAnchorMix(o.immediate ? 0 : 1.2);
     },
     stats: () => ({ fps, particles: layer.n, tier: quality.tier }),
     shapes: () => layer.shapes,
@@ -354,7 +411,13 @@ export async function createEngine(opts: EngineOptions): Promise<Engine> {
       document.removeEventListener('visibilitychange', onVisibility);
       canvas.removeEventListener('webglcontextlost', onLost);
       canvas.removeEventListener('webglcontextrestored', onRestored);
-      gsap.killTweensOf([uniforms.uOpacity, stars.uniforms.uOpacity, tilt]);
+      gsap.killTweensOf([
+        uniforms.uOpacity,
+        uniforms.uAnchorMix,
+        stars.uniforms.uOpacity,
+        tilt,
+        anchor,
+      ]);
       layer.morph.dispose();
       layer.geometry.dispose();
       material.dispose();

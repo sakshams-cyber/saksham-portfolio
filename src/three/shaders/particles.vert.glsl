@@ -6,6 +6,8 @@ uniform float uSize;         // base point size in world units (~0.11)
 uniform float uScale;        // drawingBufferHeight / (2 * tan(fov/2))
 uniform float uMaxPoint;     // GPU max point size (ALIASED_POINT_SIZE_RANGE[1])
 uniform float uShapeScale;   // < 1 on portrait viewports
+uniform vec3 uAnchor;        // hero: (x, y) world offset + scale that lays the name over the H1
+uniform float uAnchorMix;    // 0 = centred shape, 1 = anchored to the H1
 
 attribute vec3 aPosA;
 attribute vec3 aPosB;
@@ -24,7 +26,10 @@ void main() {
   float le = clamp((uProgress - d) / (1.0 - d), 0.0, 1.0);
   le = le * le * (3.0 - 2.0 * le);
 
-  vec3 p = mix(aPosA, aPosB, le) * uShapeScale;
+  // Scale and position: centred at uShapeScale, or blended toward the H1 anchor in the hero.
+  float s = mix(uShapeScale, uAnchor.z, uAnchorMix);
+  vec3 p = mix(aPosA, aPosB, le) * s;
+  p.xy += uAnchor.xy * uAnchorMix;
 
   // Mid-flight bulge: paths arc outward in z during the morph; sin(πt) is zero at both ends.
   float bulge = sin(le * PI) * 1.3 * (0.4 + aSeed);
@@ -41,7 +46,7 @@ void main() {
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
   gl_Position = projectionMatrix * mv;
   // Perspective size: world size × pixels-per-unit-at-distance-1 ÷ depth, clamped to the GPU max.
-  // Points shrink with uShapeScale too, so portrait shapes keep the same density (not a blob).
-  gl_PointSize = min(uSize * uShapeScale * uScale / max(0.001, -mv.z), uMaxPoint);
+  // Points shrink with the shape scale too, so smaller shapes keep the same density (not a blob).
+  gl_PointSize = min(uSize * s * uScale / max(0.001, -mv.z), uMaxPoint);
   vColor = mix(aColA, aColB, le);
 }

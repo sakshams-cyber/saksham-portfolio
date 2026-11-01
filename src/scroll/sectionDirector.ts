@@ -17,9 +17,9 @@ let firstPaint = 0;
 
 /** Particle opacity per section kind. Free-standing text (hero, thesis, about) gets a dimmer
  *  field than text on opaque panels; the bird thread is the story's payoff, so it's brightest.
- *  The settled name sits behind the H1, so the hero dims it to a backdrop (see DECISIONS). */
+ *  In the hero the settled name is laid over the H1's first word as a glowing echo. */
 const OPACITY: Record<Section['kind'], number> = {
-  hero: 0.55,
+  hero: 0.7,
   thesis: 0.45,
   cards: 0.6,
   habit: 0.6,
@@ -28,9 +28,18 @@ const OPACITY: Record<Section['kind'], number> = {
   contact: 0.4,
 };
 
+/** The H1's first word ("Saksham") in document px — the settled particle name lies over it. */
+function heroAnchor() {
+  const word = document.querySelector('#hero-title span');
+  if (!word) return null;
+  const r = word.getBoundingClientRect();
+  return { cx: r.left + r.width / 2, cy: r.top + window.scrollY + r.height / 2, width: r.width };
+}
+
 /** Push the active section to the particles (unless the intro owns them right now). */
 function applyEngine(api: EngineApi | null, immediate = false) {
   if (!api || introRunning) return;
+  api.setAnchor(current.kind === 'hero' ? heroAnchor() : null, { immediate });
   api.setTarget(current.shape, current.accent, { immediate });
   api.setOpacity(OPACITY[current.kind], { duration: immediate ? 0 : 1.2 });
 }
@@ -72,6 +81,7 @@ export function initSectionDirector(): () => void {
     const engine = api as EngineApi & { armPerfMonitor?: () => void };
     if (introEligible() && !late && current.kind === 'hero') {
       introRunning = true;
+      api.setAnchor(heroAnchor(), { immediate: true });
       playHeroIntro(api, () => {
         introRunning = false;
         applyEngine(api);
@@ -95,11 +105,15 @@ export function initSectionDirector(): () => void {
   };
   window.addEventListener('resize', onResize);
   void document.fonts?.ready.then(refresh);
+  const settle = window.setTimeout(() => {
+    if (current.kind === 'hero') engineBridge.get()?.setAnchor(heroAnchor());
+  }, 1300);
   const onPageShow = (e: PageTransitionEvent) => e.persisted && refresh();
   window.addEventListener('pageshow', onPageShow);
 
   return () => {
     triggers.forEach((t) => t.kill());
+    window.clearTimeout(settle);
     offReady();
     window.removeEventListener('resize', onResize);
     window.removeEventListener('pageshow', onPageShow);

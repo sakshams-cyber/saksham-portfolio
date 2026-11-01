@@ -5,6 +5,11 @@ import type { SetTargetOptions } from './morph';
 export interface EngineApi {
   setTarget(shape: ShapeKey, accent: string, opts?: SetTargetOptions): void;
   setOpacity(value: number, opts?: { duration?: number }): void;
+  /** Lay the settled name over a DOM word (document px), or null to centre it again. */
+  setAnchor(
+    anchor: { cx: number; cy: number; width: number } | null,
+    opts?: { immediate?: boolean },
+  ): void;
 }
 
 let api: EngineApi | null = null;
