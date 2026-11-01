@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Saksham Srivastava — Researcher &amp; Builder</title>
+    <meta
+      name="description"
+      content="Student researcher &amp; builder. Computational therapeutics, on-device AI, and bird science — bound together by a habit of trying to prove myself wrong."
+    />
+    <meta name="theme-color" content="#03040a" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="canonical" href="%VITE_SITE_URL%/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link
+      rel="preload"
+      href="/fonts/space-grotesk-latin-var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/inter-latin-var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="%VITE_SITE_URL%/" />
+    <meta property="og:title" content="Saksham Srivastava — Researcher &amp; Builder" />
+    <meta
+      property="og:description"
+      content="One question, many forms. Computational therapeutics, on-device AI, and bird science."
+    />
+    <meta property="og:image" content="%VITE_SITE_URL%/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Saksham Srivastava, written over a field of light particles."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Saksham Srivastava",
+        "url": "%VITE_SITE_URL%/",
+        "affiliation": { "@type": "EducationalOrganization", "name": "Saint Francis High School" },
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Sunnyvale",
+          "addressRegion": "CA",
+          "addressCountry": "US"
+        },
+        "sameAs": [
+          "https://www.linkedin.com/in/sakshamsrivastava7",
+          "https://medium.com/@saksham.shubh2010"
+        ]
+      }
+    </script>
+    <script>
+      // Runs before first paint. `motion` enables reveal transitions; without JS (or with
+      // reduced motion) content is visible immediately. If the app bundle never boots, drop
+      // `motion` so nothing stays hidden.
+      (function () {
+        var d = document.documentElement;
+        var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        d.classList.add('js', reduce ? 'reduce' : 'motion');
+        if (/[?&]og=1/.test(location.search)) d.classList.add('og');
+        setTimeout(function () {
+          if (!window.__app) d.classList.remove('motion');
+        }, 4000);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"><!--app--></div>
+    <noscript
+      ><style>
+        .reveal {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      </style></noscript
+    >
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

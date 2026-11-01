@@ -1,0 +1,33 @@
+.pill {
+  position: fixed;
+  right: var(--gutter);
+  bottom: 20px;
+  z-index: var(--z-pill);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 10px 10px 16px;
+  background: var(--panel-strong);
+  border: 1px solid var(--accent);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  font-size: 11px;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.pill strong {
+  color: var(--ink);
+}
+.clear {
+  padding: 6px 10px;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  font-size: 11px;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.clear:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+}

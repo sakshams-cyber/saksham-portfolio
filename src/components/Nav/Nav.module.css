@@ -1,0 +1,125 @@
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-nav);
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px var(--gutter);
+  background: linear-gradient(180deg, rgba(3, 4, 10, 0.72), rgba(3, 4, 10, 0));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform 0.4s ease;
+}
+.hidden {
+  transform: translateY(-100%);
+}
+.nav:focus-within {
+  transform: none;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.mark {
+  width: 9px;
+  height: 9px;
+  background: var(--accent);
+  box-shadow: 0 0 14px var(--accent);
+}
+.primary {
+  display: flex;
+  align-items: center;
+}
+.links {
+  display: flex;
+  gap: 26px;
+}
+.link {
+  position: relative;
+  display: inline-block;
+  padding: 6px 0;
+  font-size: 12px;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--dim);
+  transition: color var(--t-fast) ease;
+}
+.link:hover,
+.active {
+  color: var(--ink);
+}
+.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+.menuBtn {
+  display: none;
+  padding: 8px 14px;
+  border: 1px solid var(--line-strong);
+  background: rgba(3, 4, 10, 0.6);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.panel {
+  display: none;
+}
+@media (max-width: 760px) {
+  .desktop {
+    display: none;
+  }
+  .menuBtn {
+    display: inline-block;
+  }
+  .panel.open {
+    display: block;
+    position: fixed;
+    top: var(--nav-h);
+    left: 0;
+    right: 0;
+    padding: 18px var(--gutter) 26px;
+    background: rgba(5, 7, 14, 0.97);
+    border-bottom: 1px solid var(--line);
+  }
+  .panel .links {
+    flex-direction: column;
+    gap: 4px;
+  }
+  .panel .link {
+    display: block;
+    padding: 12px 0;
+    font-size: 14px;
+  }
+  .panel .active::after {
+    right: auto;
+    width: 28px;
+  }
+}
+@media (max-width: 360px) {
+  .brand {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+}

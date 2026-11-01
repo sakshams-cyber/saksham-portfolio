@@ -1,0 +1,26 @@
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin: var(--s-8) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.step {
+  padding-top: 18px;
+  border-top: 1px solid var(--line-strong);
+}
+.key {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-3);
+}

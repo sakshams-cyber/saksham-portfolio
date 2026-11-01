@@ -1,0 +1,20 @@
+.eyebrow {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 22px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+.center {
+  justify-content: center;
+}
+.num {
+  color: var(--faint-deco);
+}
+.label {
+  color: var(--accent);
+}

@@ -1,0 +1,22 @@
+.button {
+  display: inline-block;
+  padding: 14px 22px;
+  border: 1px solid var(--line-strong);
+  background: rgba(3, 4, 10, 0.5);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    background var(--t-fast) ease,
+    color var(--t-fast) ease,
+    border-color var(--t-fast) ease;
+}
+.button:hover,
+.button:focus-visible {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}

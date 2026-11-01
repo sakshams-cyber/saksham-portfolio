@@ -1,0 +1,143 @@
+/* Self-hosted variable fonts, Latin subset only (§13). */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src:
+    url('/fonts/space-grotesk-latin-var.woff2') format('woff2-variations'),
+    url('/fonts/space-grotesk-latin-var.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src:
+    url('/fonts/inter-latin-var.woff2') format('woff2-variations'),
+    url('/fonts/inter-latin-var.woff2') format('woff2');
+}
+/* Metric-matched fallbacks so the swap doesn't shift layout (CLS). */
+@font-face {
+  font-family: 'Space Grotesk Fallback';
+  src: local('Arial'), local('Helvetica Neue'), local('Helvetica');
+  size-adjust: 105%;
+  ascent-override: 93%;
+  descent-override: 27%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial'), local('Helvetica Neue'), local('Helvetica');
+  size-adjust: 107.12%;
+  ascent-override: 90.44%;
+  descent-override: 22.52%;
+  line-gap-override: 0%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-radius: 0;
+}
+
+html {
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: var(--nav-h);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+p,
+ul,
+figure,
+blockquote {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Headings that receive programmatic focus after nav jumps don't need a ring. */
+[tabindex='-1']:focus:not(:focus-visible) {
+  outline: none;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.hl {
+  font-style: normal;
+  color: var(--accent);
+}
+
+/* Dark halo for text that sits directly over the particle field (no panel behind it). */
+.halo {
+  text-shadow:
+    0 0 22px rgba(3, 4, 10, 0.95),
+    0 0 8px rgba(3, 4, 10, 0.9),
+    0 0 2px rgba(3, 4, 10, 0.9);
+}
+
+/* ?og=1 — social-card capture mode: only the name over the settled particle field. */
+html.og header,
+html.og #progress,
+html.og main > section:not(#top),
+html.og footer,
+html.og [data-testid='filter-pill'] {
+  display: none !important;
+}
+html.og #top > :not(:has(h1)) {
+  visibility: hidden;
+}

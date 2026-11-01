@@ -1,0 +1,39 @@
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: rgba(3, 4, 10, 0.4);
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+}
+.confirmed {
+  color: var(--lvl-confirmed-ink);
+}
+.confirmed .dot {
+  background: var(--lvl-confirmed);
+  box-shadow: 0 0 8px var(--lvl-confirmed);
+}
+.built {
+  color: var(--lvl-built-ink);
+}
+.built .dot {
+  background: var(--lvl-built);
+  box-shadow: 0 0 8px var(--lvl-built);
+}
+.prepared {
+  color: var(--lvl-prepared-ink);
+}
+.prepared .dot {
+  background: var(--lvl-prepared);
+}
