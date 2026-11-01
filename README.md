@@ -53,9 +53,9 @@ default in `.env` is the placeholder `https://REPLACE_WITH_DOMAIN`.
 - **Netlify:** `netlify.toml` has the same build and headers.
 - **Cloudflare Pages:** build command `npm run build`, output `dist`. Copy the headers from
   `netlify.toml` into a `public/_headers` file in the same format.
-- **GitHub Pages:** build in a workflow and publish `dist/`. For a project subpath, set
-  `base: '/<repo>/'` in `vite.config.ts` and update the absolute `/fonts/...` URLs in
-  `src/styles/base.css` and `index.html`.
+- **GitHub Pages (live):** `.github/workflows/pages.yml` builds and deploys on every push to
+  `main`, to https://sakshams-cyber.github.io/saksham-portfolio/. Asset URLs are relative
+  (`base: './'` in `vite.config.ts`), so no path changes are needed.
 
 After the first deploy, run `npm run og` and commit the new `public/og-image.png`.
 
