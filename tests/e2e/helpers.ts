@@ -45,26 +45,27 @@ export async function waitForDirector(page: Page) {
 
 /** Scroll through the whole page so every reveal has fired. */
 export async function revealAll(page: Page) {
-  await page.evaluate(async () => {
-    const step = window.innerHeight / 2;
-    for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
-      window.scrollTo(0, y);
-      await new Promise((r) => setTimeout(r, 40));
-    }
-    // Linger at the bottom so the last observer callbacks land before jumping back up.
-    window.scrollTo(0, document.documentElement.scrollHeight);
-    await new Promise((r) => setTimeout(r, 400));
-    window.scrollTo(0, 0);
-  });
+  // Visit each section in turn and let observers catch up; slow CI runners need the pauses.
+  for (const id of SECTION_IDS) {
+    await page.evaluate(
+      (sid) => document.getElementById(sid)?.scrollIntoView({ block: 'start' }),
+      id,
+    );
+    await page.waitForTimeout(250);
+  }
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   // Every reveal has fired and finished its transition (axe measures real opacity).
   await expect
-    .poll(() =>
-      page.evaluate(() =>
-        [...document.querySelectorAll('.reveal:not(.in)')].map(
-          (e) => `${e.closest('section')?.id ?? '?'} ${e.className}`,
+    .poll(
+      () =>
+        page.evaluate(() =>
+          [...document.querySelectorAll('.reveal:not(.in)')].map(
+            (e) => `${e.closest('section')?.id ?? '?'} ${e.className}`,
+          ),
         ),
-      ),
+      { timeout: 20_000 },
     )
     .toEqual([]);
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(1500);
 }
