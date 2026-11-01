@@ -16,6 +16,7 @@ const server = spawn('npx', ['vite', 'preview', '--port', String(port), '--stric
 try {
   await new Promise((r) => setTimeout(r, 1500));
   const browser = await chromium.launch({
+    channel: process.env.PW_CHANNEL || undefined,
     args: ['--use-angle=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist'],
   });
   const page = await browser.newPage({

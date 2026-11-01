@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import type { Award } from '../../content/types';
 import { useStore } from '../../state/store';
 import { Tag } from '../Tag/Tag';
+import { whenRevealed } from '../Reveal/whenRevealed';
 import styles from './AwardsTable.module.css';
 
 /** Semantic table; rows reveal with a 40ms stagger capped at 400ms (§10.10). */
@@ -11,21 +12,8 @@ export function AwardsTable({ awards, caption }: { awards: Award[]; caption: str
 
   useEffect(() => {
     const table = ref.current;
-    if (!table || typeof IntersectionObserver === 'undefined') {
-      table?.classList.add(styles.in);
-      return;
-    }
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          table.classList.add(styles.in);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.1 },
-    );
-    io.observe(table);
-    return () => io.disconnect();
+    if (!table) return;
+    return whenRevealed(table, () => table.classList.add(styles.in), 0.1);
   }, []);
 
   return (

@@ -25,6 +25,34 @@ html.motion .reveal.d4 {
   transition-delay: 0.32s;
 }
 
+/* The hero enters on a pure CSS animation from first paint, never waiting for hydration or an
+   observer — so the H1 (the LCP element) paints as early as the HTML allows. */
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+html.motion #top .reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+  animation: reveal-in var(--t-reveal) var(--ease-out) both;
+}
+html.motion #top .reveal.d1 {
+  animation-delay: 0.08s;
+}
+html.motion #top .reveal.d2 {
+  animation-delay: 0.16s;
+}
+html.motion #top .reveal.d3 {
+  animation-delay: 0.24s;
+}
+
 @keyframes cue {
   0% {
     transform: scaleY(0);

@@ -18,6 +18,8 @@ export function Nav() {
   const [open, setOpen] = useState(false);
   const menuBtn = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
+  // Until this timestamp, scrolling comes from a nav jump and must not hide the nav.
+  const holdUntil = useRef(0);
 
   // Hide on scroll-down past 120px, show on scroll-up / at top (§9.4).
   useEffect(() => {
@@ -28,7 +30,7 @@ export function Nav() {
       ticking = true;
       requestAnimationFrame(() => {
         const y = window.scrollY;
-        if (y < 120) setHidden(false);
+        if (y < 120 || performance.now() < holdUntil.current) setHidden(false);
         else if (y > last + 4) setHidden(true);
         else if (y < last - 4) setHidden(false);
         last = y;
@@ -67,6 +69,7 @@ export function Nav() {
   const onLink = (e: MouseEvent, id: string) => {
     e.preventDefault();
     setOpen(false);
+    holdUntil.current = performance.now() + 2000;
     goToSection(id);
   };
 

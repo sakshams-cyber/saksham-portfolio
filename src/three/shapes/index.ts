@@ -28,10 +28,16 @@ export const SHAPE_SEEDS: Record<ShapeKey, number> = {
   ring: 606,
 };
 
+/** Yield to the event loop so each shape is its own short task (keeps input responsive / TBT low). */
+const yieldToMain = () => new Promise<void>((r) => setTimeout(r, 0));
+
 /** Build every shape for n particles. `name` is built last so the font has the most time to load. */
 export async function buildAllShapes(n: number): Promise<Record<ShapeKey, Float32Array>> {
   const order: ShapeKey[] = ['bird', 'helix', 'wave', 'sphere', 'ring', 'name'];
   const out = {} as Record<ShapeKey, Float32Array>;
-  for (const k of order) out[k] = await SHAPES[k](n, mulberry32(SHAPE_SEEDS[k]));
+  for (const k of order) {
+    out[k] = await SHAPES[k](n, mulberry32(SHAPE_SEEDS[k]));
+    await yieldToMain();
+  }
   return out;
 }

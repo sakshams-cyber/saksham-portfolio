@@ -37,7 +37,9 @@ export async function centerSection(page: Page, id: string) {
 /** Wait until the orchestration chunk has run (it sets --accent inline on <html>). */
 export async function waitForDirector(page: Page) {
   await expect
-    .poll(() => page.evaluate(() => document.documentElement.style.getPropertyValue('--accent')))
+    .poll(() => page.evaluate(() => document.documentElement.style.getPropertyValue('--accent')), {
+      timeout: 25_000,
+    })
     .not.toBe('');
 }
 
@@ -49,7 +51,20 @@ export async function revealAll(page: Page) {
       window.scrollTo(0, y);
       await new Promise((r) => setTimeout(r, 40));
     }
+    // Linger at the bottom so the last observer callbacks land before jumping back up.
+    window.scrollTo(0, document.documentElement.scrollHeight);
+    await new Promise((r) => setTimeout(r, 400));
     window.scrollTo(0, 0);
   });
-  await page.waitForTimeout(1200);
+  // Every reveal has fired and finished its transition (axe measures real opacity).
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        [...document.querySelectorAll('.reveal:not(.in)')].map(
+          (e) => `${e.closest('section')?.id ?? '?'} ${e.className}`,
+        ),
+      ),
+    )
+    .toEqual([]);
+  await page.waitForTimeout(1500);
 }

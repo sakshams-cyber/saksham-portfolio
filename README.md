@@ -17,29 +17,30 @@ npm install
 npm run dev            # http://localhost:5173
 ```
 
-| Command | What it does |
-|---|---|
-| `npm run dev` | Dev server with hot reload |
-| `npm run build` | Typecheck, client build, SSR build, then pre-render into `dist/index.html` |
-| `npm run preview` | Serve `dist/` on http://localhost:4173 |
-| `npm run typecheck` / `npm run lint` | TypeScript and ESLint (with `jsx-a11y`) |
-| `npm test` | Unit tests (Vitest): content schema, shapes, colours, morph maths |
-| `npm run test:e2e` | Playwright: smoke, filter, fallbacks, axe, shapes, visual (needs `npm run build` first) |
-| `npm run lhci` | Lighthouse CI against `dist/` with the thresholds in `lighthouserc.json` |
-| `npm run og` | Regenerate `public/og-image.png` from the built site |
-| `npm run icons` | Regenerate the PNG app icons |
+| Command                              | What it does                                                                            |
+| ------------------------------------ | --------------------------------------------------------------------------------------- |
+| `npm run dev`                        | Dev server with hot reload                                                              |
+| `npm run build`                      | Typecheck, client build, SSR build, then pre-render into `dist/index.html`              |
+| `npm run preview`                    | Serve `dist/` on http://localhost:4173                                                  |
+| `npm run typecheck` / `npm run lint` | TypeScript and ESLint (with `jsx-a11y`)                                                 |
+| `npm test`                           | Unit tests (Vitest): content schema, shapes, colours, morph maths                       |
+| `npm run test:e2e`                   | Playwright: smoke, filter, fallbacks, axe, shapes, visual (needs `npm run build` first) |
+| `npm run lhci`                       | Lighthouse CI against `dist/` with the thresholds in `lighthouserc.json`                |
+| `npm run og`                         | Regenerate `public/og-image.png` from the built site                                    |
+| `npm run icons`                      | Regenerate the PNG app icons                                                            |
 
-The first e2e run needs browsers: `npx playwright install chromium webkit`.
+The first e2e run needs browsers: `npx playwright install chromium webkit`. To use an installed
+Google Chrome instead of the bundled Chromium, run `PW_CHANNEL=chrome npm run test:e2e`.
 
 ### Test and debug URL flags
 
-| Flag | Effect |
-|---|---|
-| `?nointro=1` | Skip the hero intro and start settled on the name |
-| `?freeze=1` | Freeze time and make every tween instant (deterministic screenshots) |
-| `?debug=1` | Debug panel: shape and accent buttons, FPS, particle count, GPU tier |
-| `?forceStatic=1` | Behave as if WebGL were unavailable |
-| `?level=confirmed` | Pre-select a confidence filter (also written by the filter itself) |
+| Flag               | Effect                                                               |
+| ------------------ | -------------------------------------------------------------------- |
+| `?nointro=1`       | Skip the hero intro and start settled on the name                    |
+| `?freeze=1`        | Freeze time and make every tween instant (deterministic screenshots) |
+| `?debug=1`         | Debug panel: shape and accent buttons, FPS, particle count, GPU tier |
+| `?forceStatic=1`   | Behave as if WebGL were unavailable                                  |
+| `?level=confirmed` | Pre-select a confidence filter (also written by the filter itself)   |
 
 ## Deploy
 
@@ -68,7 +69,7 @@ This section is for Saksham.
    - `confirmed`: it happened and can be checked (an award, a placement, a talk you gave).
    - `built`: the thing exists (code, paper, video), whatever the outcome.
    - `prepared`: applied, submitted, or a concept still in progress.
-   Add `feature: true` to make a card span the full row.
+     Add `feature: true` to make a card span the full row.
 3. **When an outcome lands** (for example IYRC acceptance or the App Challenge result), update the
    project's `note`. If it's now an award, add a row to the `awards` array with
    `level: 'confirmed'`.

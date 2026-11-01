@@ -15,7 +15,6 @@
   --ink-3: #aab6d8; /* body / bullets */
   --dim: #8593b6; /* secondary labels */
   --faint: #6c7aa0; /* numerals, footnotes — lightened from #4a5578 to pass 4.5:1 (see DECISIONS) */
-  --faint-deco: #4a5578; /* purely decorative numerals only */
   --panel: rgba(7, 9, 18, 0.78);
   --panel-strong: rgba(10, 13, 26, 0.88);
   --line: rgba(255, 255, 255, 0.1);

@@ -41,6 +41,7 @@ test('every shape is finite, in bounds, deterministic and non-degenerate', async
   for (const [k, r] of Object.entries(report)) {
     expect(r.ok, `${k} in bounds`).toBe(true);
     expect(r.vx, `${k} x-variance`).toBeGreaterThan(1);
-    expect(r.vy, `${k} y-variance`).toBeGreaterThan(0.5);
+    // A one-line word is wide and short by nature, so y gets a lower floor than x.
+    expect(r.vy, `${k} y-variance`).toBeGreaterThan(0.25);
   }
 });

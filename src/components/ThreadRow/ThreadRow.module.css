@@ -34,7 +34,7 @@
   font-weight: 500;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--faint);
+  color: var(--dim);
 }
 .title {
   margin-top: 8px;

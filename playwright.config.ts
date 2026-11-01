@@ -8,7 +8,11 @@ export default defineConfig({
   timeout: 60_000,
   expect: { timeout: 10_000 },
   fullyParallel: true,
+  // Each worker renders WebGL in software (SwiftShader); more than a few saturate the CPU.
+  workers: process.env.CI ? 2 : 3,
   retries: process.env.CI ? 1 : 0,
+  // Visual baselines are per-OS; a missing one (e.g. first Linux CI run) is written, not failed.
+  updateSnapshots: 'missing',
   reporter: process.env.CI ? [['html', { open: 'never' }], ['list']] : 'list',
   use: { baseURL: 'http://localhost:4173', trace: 'retain-on-failure' },
   webServer: {
@@ -19,7 +23,12 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'], launchOptions: { args: webglArgs } },
+      // PW_CHANNEL=chrome runs against an installed Google Chrome instead of the bundled build.
+      use: {
+        ...devices['Desktop Chrome'],
+        channel: process.env.PW_CHANNEL || undefined,
+        launchOptions: { args: webglArgs },
+      },
     },
     {
       name: 'webkit',
